@@ -93,12 +93,21 @@ resource "aws_security_group_rule" "ingress_cidr_blocks" {
   type              = "ingress"
 }
 
+resource "aws_cloudwatch_log_group" "default" {
+  count             = "${var.enabled == "true" ? 1 : 0}"
+  name              = "/aws/eks/${module.label.id}/cluster"
+  retention_in_days = 7
+
+}
+
 resource "aws_eks_cluster" "default" {
   count                     = "${var.enabled == "true" ? 1 : 0}"
   name                      = "${module.label.id}"
   role_arn                  = "${join("", aws_iam_role.default.*.arn)}"
   version                   = "${var.kubernetes_version}"
   enabled_cluster_log_types = ["${var.enabled_cluster_log_types}"]
+
+  enabled_cluster_log_types = ["api", "audit"]
 
   vpc_config {
     security_group_ids      = ["${join("", aws_security_group.default.*.id)}"]
