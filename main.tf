@@ -107,8 +107,6 @@ resource "aws_eks_cluster" "default" {
   version                   = "${var.kubernetes_version}"
   enabled_cluster_log_types = ["${var.enabled_cluster_log_types}"]
 
-  enabled_cluster_log_types = ["api", "audit"]
-
   vpc_config {
     security_group_ids      = ["${join("", aws_security_group.default.*.id)}"]
     subnet_ids              = ["${var.subnet_ids}"]
